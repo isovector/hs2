@@ -2,8 +2,7 @@
 
 ## Prescriptive
 
-1. Push Haskell towards being the language it should be, rather than the language
-    it is for historical reasons.
+Push Haskell to be a better language, this will involve removing some of the historical artifacts that are remnants of the stepping stones that got us to where we are today.
 2. Don't let perfection be the enemy of the good. Prefer good solutions that
    improve everyday programmers' lives. This might look like removing of
    `String`, fix records, and adopt `-XExtraCommas`.
@@ -48,4 +47,3 @@
 
 1. Greatly prefer existing software solutions to rolling our own. Target
    tree-sitter, GRIN and LLVM.
-
