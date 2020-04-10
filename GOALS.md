@@ -20,7 +20,9 @@
    customers.
 2. Start with tooling-support in mind. The MVP should launch with a
    language-server with equivalent features to HIE.
-
+## Productive
+1. Target fast compilation times. Full project builds should be no slower than GHC in the worst case, but we aim to do significantly better.
+2. Feedback from the compiler during development should be quick and responsive. You should be able to know that you've introduced an error quickly, and that you've resolved an error quickly.
 
 ## Modular, Composable and Hackable
 
