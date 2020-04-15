@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cd318b20c647bbbb7ca5063013daec1b453de368bd2d26b6f62952d1b26a03f2
+-- hash: 694ff4ef683ca8a1ed916572f18350605e1575cd646f4a0fa16c1f86194f4e1e
 
 name:           hs2-types
 version:        0.1.0.0
@@ -27,36 +27,11 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Hs2.Types.Expr
   other-modules:
       Paths_hs2_types
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
-  default-language: Haskell2010
-
-executable hs2-types-exe
-  main-is: Main.hs
-  other-modules:
-      Paths_hs2_types
-  hs-source-dirs:
-      app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , hs2-types
-  default-language: Haskell2010
-
-test-suite hs2-types-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Paths_hs2_types
-  hs-source-dirs:
-      test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , hs2-types
   default-language: Haskell2010
