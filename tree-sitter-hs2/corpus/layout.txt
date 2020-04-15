@@ -1,0 +1,98 @@
+==================================
+Multiple functions with where clauses
+==================================
+
+f = a
+  where a = b
+        b = 1
+
+f = a
+  where a = b
+        b = 1
+
+---
+
+(module
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (variable_identifier)
+      (where
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (variable_identifier)))
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (integer))))))
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (variable_identifier)
+      (where
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (variable_identifier)))
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (integer)))))))
+
+==================================
+Nested layout
+==================================
+
+f = foo
+  where a = b
+          where c = d
+                e = f
+        x = w
+
+g = do a
+       b
+       do c
+          d
+          do e
+             f
+
+x = y
+
+---
+
+(module
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (variable_identifier)
+      (where
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (variable_identifier)
+            (where
+              (function_declaration
+                (variable_identifier)
+                (function_body (variable_identifier)))
+              (function_declaration
+                (variable_identifier)
+                (function_body (variable_identifier))))))
+        (function_declaration
+          (variable_identifier)
+          (function_body (variable_identifier))))))
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (do
+        (variable_identifier)
+        (variable_identifier)
+        (do
+          (variable_identifier)
+          (variable_identifier)
+          (do
+            (variable_identifier)
+            (variable_identifier))))))
+  (function_declaration
+    (variable_identifier)
+    (function_body (variable_identifier))))

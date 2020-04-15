@@ -1,0 +1,65 @@
+=========================================
+adjunctions.Control.Monad.Contra.Adjoint
+=========================================
+
+instance (Distributive a, Distributive b) => Distributive (a :*: b) where
+  -- It might be tempting to write a 'collect' implementation that
+  -- composes the passed function with fstP and sndP. This could be bad,
+  -- because it would lead to the passed function being evaluated twice
+  -- for each element of the underlying functor.
+  distribute f = collect fstP f :*: collect sndP f where
+    fstP (l :*: _) = l
+    sndP (_ :*: r) = r
+
+---
+
+(module
+  (type_class_instance_declaration
+    (scontext
+      (tuple_type
+        (type_constructor_identifier)
+        (type_variable_identifier)
+        (type_constructor_identifier)
+        (type_variable_identifier))))
+    (type_class_identifier)
+    (instance
+      (parenthesized_constructor
+        (type_variable_identifier)
+        (ERROR)))
+    (where
+      (function_declaration
+        (variable_identifier)
+        (variable_identifier)
+        (function_body
+          (infix_operator_application
+            (function_application
+              (function_application
+                (variable_identifier)
+                (variable_identifier))
+              (variable_identifier))
+            (constructor_operator
+              (constructor_symbol))
+            (function_application
+              (function_application
+                (variable_identifier)
+                (variable_identifier))
+              (variable_identifier)))
+          (where
+            (function_declaration
+              (variable_identifier)
+              (parenthesized_pattern
+                (variable_identifier)
+                (constructor_operator
+                  (constructor_symbol))
+                (wildcard))
+              (function_body
+                (variable_identifier)))
+            (function_declaration
+              (variable_identifier)
+              (parenthesized_pattern
+                (wildcard)
+                (constructor_operator
+                  (constructor_symbol))
+                (variable_identifier))
+              (function_body
+                (variable_identifier)))))))))

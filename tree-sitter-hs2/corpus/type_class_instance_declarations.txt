@@ -1,0 +1,129 @@
+=========================================
+Type Class Instance Declarations
+=========================================
+
+instance Show Int where {}
+instance Show (Maybe a) where {}
+instance Show (a, b, c) where {}
+instance Show [a] where {}
+instance Show (a -> b) where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (type_class_identifier)
+    (instance (type_constructor_identifier)) (where))
+  (type_class_instance_declaration
+    (type_class_identifier)
+    (instance (parenthesized_constructor (type_constructor_identifier) (type_variable_identifier))) (where))
+  (type_class_instance_declaration
+    (type_class_identifier)
+    (instance (tuple_type (type_variable_identifier) (type_variable_identifier) (type_variable_identifier))) (where))
+  (type_class_instance_declaration
+    (type_class_identifier)
+    (instance (list_type (type_variable_identifier))) (where))
+  (type_class_instance_declaration
+    (type_class_identifier)
+    (instance (parenthesized_constructor (function_type (type (type_variable_identifier)) (type (type_variable_identifier))))) (where)))
+
+=========================================
+Type Class Instance Declarations With Context
+=========================================
+
+instance Show a => Read Int where {}
+instance Show a => Read (Maybe a) where {}
+instance (Show a, Eq a) => Read (Maybe a) where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (scontext
+      (simple_class (type_class_identifier) (type_variable_identifier)))
+    (type_class_identifier)
+    (instance (type_constructor_identifier))
+    (where))
+  (type_class_instance_declaration
+    (scontext (simple_class (type_class_identifier) (type_variable_identifier)))
+    (type_class_identifier)
+    (instance (parenthesized_constructor (type_constructor_identifier) (type_variable_identifier)))
+    (where))
+  (type_class_instance_declaration
+    (scontext
+      (simple_class (type_class_identifier) (type_variable_identifier))
+      (simple_class (type_class_identifier) (type_variable_identifier)))
+    (type_class_identifier)
+    (instance (parenthesized_constructor (type_constructor_identifier) (type_variable_identifier)))
+    (where)))
+
+=========================================
+Type Class Instance Declarations With Body
+=========================================
+
+instance Foo Bar where
+  baz :: Num b => a -> b -> a
+  baz' :: (Num a, Num b) => Maybe a -> Either String b -> Maybe (Either String a)
+
+---
+
+(module
+  (type_class_instance_declaration
+    (type_class_identifier)
+    (instance (type_constructor_identifier))
+    (where
+      (type_signature
+        (variable_identifier)
+        (annotation)
+        (context (class (constructor_identifier) (type_variable_identifier)))
+        (function_type
+          (type (type_variable_identifier))
+          (function_type
+            (type (type_variable_identifier))
+            (type (type_variable_identifier)))))
+      (type_signature
+        (variable_identifier)
+        (annotation)
+        (context
+          (class (constructor_identifier) (type_variable_identifier))
+          (class (constructor_identifier) (type_variable_identifier)))
+        (function_type
+          (type
+            (type_constructor_identifier)
+            (type_variable_identifier))
+          (function_type
+            (type
+              (type_constructor_identifier)
+              (type_constructor_identifier)
+              (type_variable_identifier))
+            (type
+              (type_constructor_identifier)
+              (parenthesized_constructor
+                (type_constructor_identifier)
+                (type_constructor_identifier)
+                (type_variable_identifier)))))))))
+
+
+=========================================
+Multi-param Type Class Instance Declarations
+=========================================
+
+
+instance Bar a b m => Baz a b m where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (scontext
+      (simple_class
+        (type_class_identifier)
+        (type_variable_identifier)
+        (type_variable_identifier)
+        (type_variable_identifier)))
+    (type_class_identifier)
+    (instance
+      (type_variable_identifier)
+      (type_variable_identifier)
+      (type_variable_identifier))
+    (where)))

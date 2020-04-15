@@ -1,0 +1,749 @@
+=========================================
+Inline Pragmas
+=========================================
+
+factorial :: Num a => a -> a
+factorial 0 = 0
+factorial n = n * factorial (n-1)
+{-# INLINE factorial #-}
+
+a = b
+{-# INLINE CONLIKE [1] a #-}
+{-# INLINE [~2] a #-}
+
+---
+
+(module
+  (type_signature
+    (variable_identifier)
+    (annotation)
+    (context
+      (class (constructor_identifier) (type_variable_identifier)))
+      (function_type
+        (type (type_variable_identifier))
+        (type (type_variable_identifier))))
+  (function_declaration (variable_identifier) (integer)
+    (function_body (integer)))
+  (function_declaration (variable_identifier) (variable_identifier)
+    (function_body
+      (infix_operator_application (variable_identifier) (variable_operator (variable_symbol))
+      (function_application
+        (variable_identifier)
+        (parenthesized_expression (infix_operator_application (variable_identifier) (variable_operator (variable_symbol)) (integer)))))))
+  (inline_pragma (variable_identifier))
+  (function_declaration
+    (variable_identifier)
+    (function_body (variable_identifier)))
+    (inline_pragma
+      (constructor_like)
+      (phase_control (integer))
+      (variable_identifier))
+    (inline_pragma
+      (eager_phase_control (integer))
+      (variable_identifier)))
+
+=========================================
+No Inline Pragmas
+=========================================
+
+factorial :: Num a => a -> a
+factorial 0 = 0
+factorial n = n * factorial (n-1)
+{-# NOINLINE factorial #-}
+
+a = b
+{-# NOINLINE CONLIKE [1] a #-}
+{-# NOINLINE [~2] a #-}
+
+---
+
+(module
+  (type_signature
+    (variable_identifier)
+    (annotation)
+    (context
+      (class (constructor_identifier) (type_variable_identifier)))
+      (function_type
+        (type (type_variable_identifier))
+        (type (type_variable_identifier))))
+  (function_declaration (variable_identifier) (integer)
+    (function_body (integer)))
+  (function_declaration (variable_identifier) (variable_identifier)
+    (function_body
+      (infix_operator_application (variable_identifier) (variable_operator (variable_symbol))
+      (function_application
+        (variable_identifier)
+        (parenthesized_expression (infix_operator_application (variable_identifier) (variable_operator (variable_symbol)) (integer)))))))
+  (no_inline_pragma (variable_identifier))
+  (function_declaration
+    (variable_identifier)
+    (function_body (variable_identifier)))
+  (no_inline_pragma
+    (constructor_like)
+    (phase_control (integer))
+    (variable_identifier))
+  (no_inline_pragma
+    (eager_phase_control (integer))
+    (variable_identifier)))
+
+=========================================
+Specialization Pragmas
+=========================================
+
+factorial :: Num a => a -> a
+factorial 0 = 0
+factorial n = n ⋆ factorial (n-1)
+{-# SPECIALIZE [0] factorial :: Int -> Int,
+                   factorial :: Integer -> Integer #-}
+{-# SPECIALISE factorial :: Int -> Int,
+               factorial :: Integer -> Integer #-}
+
+{-# SPECIALIZE INLINE [0] factorial :: Int -> Int,
+                          factorial :: Integer -> Integer #-}
+{-# SPECIALISE NOINLINE factorial :: Int -> Int,
+                        factorial :: Integer -> Integer #-}
+
+instance (Eq a) => Eq (Foo a) where {
+  {-# SPECIALIZE instance Eq (Foo [(Int, Bar)]) #-}
+}
+
+---
+
+(module
+  (type_signature
+    (variable_identifier)
+    (annotation)
+    (context
+      (class (constructor_identifier) (type_variable_identifier)))
+      (function_type
+        (type (type_variable_identifier))
+        (type (type_variable_identifier))))
+  (function_declaration (variable_identifier) (integer)
+    (function_body (integer)))
+  (function_declaration (variable_identifier) (variable_identifier)
+    (function_body
+      (infix_operator_application (variable_identifier) (variable_operator (variable_symbol))
+      (function_application
+        (variable_identifier)
+        (parenthesized_expression (infix_operator_application (variable_identifier) (variable_operator (variable_symbol)) (integer)))))))
+  (specialization_pragma
+    (phase_control (integer))
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier))))
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier)))))
+  (specialization_pragma
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier))))
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier)))))
+  (specialization_pragma
+    (inline)
+    (phase_control (integer))
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier))))
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier)))))
+  (specialization_pragma
+    (noinline)
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier))))
+    (spec
+      (variable_identifier)
+      (annotation)
+      (function_type
+        (type (type_constructor_identifier))
+        (type (type_constructor_identifier)))))
+
+  (type_class_instance_declaration
+    (scontext
+      (simple_class (type_class_identifier) (type_variable_identifier)))
+      (type_class_identifier)
+      (instance
+        (parenthesized_constructor (type_constructor_identifier) (type_variable_identifier)))
+        (where
+          (specialization_pragma
+            (instance_spec
+              (type_class_identifier)
+              (parenthesized_pattern
+                (constructor_pattern
+                  (constructor_identifier)
+                  (list_pattern
+                    (pattern
+                      (tuple_pattern
+                        (pattern (constructor_identifier))
+                        (pattern (constructor_identifier))))))))))))
+
+=========================================
+Language Pragmas Without Module
+=========================================
+
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE ScopedTypeVariables, DataKinds #-}
+
+---
+
+(module
+  (language_pragma (language_name))
+  (language_pragma (language_name) (language_name)))
+
+=========================================
+Language Pragmas With Module
+=========================================
+
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE ScopedTypeVariables, DataKinds #-}
+
+module A where
+
+---
+
+(module
+  (language_pragma (language_name))
+  (language_pragma (language_name) (language_name))
+  (module_identifier)
+  (where))
+
+=========================================
+Source Pragma
+=========================================
+
+module A where
+
+import {-# SOURCE #-} B(TB(..))
+
+---
+
+(module
+  (module_identifier)
+  (where
+    (import_declaration
+      (source_pragma)
+      (module_identifier)
+      (import_spec
+        (import
+          (type_constructor_identifier)
+          (all_constructors))))))
+
+=========================================
+Include Pragma
+=========================================
+
+{-# INCLUDE "foo.h" #-}
+{-# INCLUDE <stdio.h> #-}
+
+---
+
+(module
+  (include_pragma (header_file))
+  (include_pragma (header_file)))
+
+
+=========================================
+Warning Pragma
+=========================================
+
+module A {-# WARNING "Unstable" #-} where
+
+f = a
+g = f
+i = h
+
+{-# WARNING f, g "Unstable" #-}
+{-# WARNING f, g ["Use B.f", "Use B.g"] #-}
+{-# WARNING i "Unsafe" #-}
+
+---
+
+(module
+  (module_identifier)
+  (warning_pragma (warning_message))
+  (where
+    (function_declaration
+      (variable_identifier)
+      (function_body
+        (variable_identifier)))
+    (function_declaration
+      (variable_identifier)
+      (function_body
+        (variable_identifier)))
+    (function_declaration
+      (variable_identifier)
+      (function_body
+        (variable_identifier)))
+    (warning_pragma
+      (variable_identifier)
+      (variable_identifier)
+      (warning_message))
+    (warning_pragma
+      (variable_identifier)
+      (variable_identifier)
+      (warning_message_list
+        (warning_message)
+        (warning_message)))
+    (warning_pragma
+      (variable_identifier)
+      (warning_message))))
+
+=========================================
+Deprecated Pragma
+=========================================
+
+module A {-# DEPRECATED "Use B" #-} where
+
+f = a
+g = f
+i = h
+
+{-# DEPRECATED f, g "Use B.f, B.g" #-}
+{-# DEPRECATED f, g ["Use B.f", "Use B.g"] #-}
+{-# DEPRECATED i "Use B.i" #-}
+
+---
+
+(module
+  (module_identifier)
+  (deprecated_pragma (deprecated_message))
+  (where
+    (function_declaration (variable_identifier) (function_body (variable_identifier)))
+    (function_declaration (variable_identifier) (function_body (variable_identifier)))
+    (function_declaration (variable_identifier) (function_body (variable_identifier)))
+    (deprecated_pragma (variable_identifier) (variable_identifier) (deprecated_message))
+    (deprecated_pragma (variable_identifier) (variable_identifier) (deprecated_message_list (deprecated_message) (deprecated_message)))
+    (deprecated_pragma (variable_identifier) (deprecated_message))))
+
+=========================================
+Line Pragma
+=========================================
+
+{-# LINE 42 "Foo.vhs" #-}
+
+---
+
+(module
+  (line_pragma
+    (line_number)
+    (file_name)))
+
+=========================================
+Line Pragma
+=========================================
+
+{-# COLUMN 42 #-}
+
+---
+
+(module
+  (column_pragma
+    (column_number)))
+
+=========================================
+Minimal Pragma
+=========================================
+
+module A where
+
+class Eq a where
+  (==) :: a -> a -> Bool
+  (/=) :: a -> a -> Bool
+  x == y = not (x /= y)
+  x /= y = not (x == y)
+  {-# MINIMAL (==) | (/=) #-}
+  {-# MINIMAL (==) , (/=) #-}
+  {-# MINIMAL (==) , (/=) | (/=) #-}
+  {-# MINIMAL (==) , (/=) | (/=) , (==) #-}
+
+---
+
+(module
+  (module_identifier)
+  (where
+    (type_class_declaration
+      (type_class_identifier)
+      (type_variable_identifier)
+      (where
+        (type_signature
+          (variable_operator (variable_symbol))
+          (annotation)
+          (function_type
+            (type (type_variable_identifier))
+            (function_type
+              (type (type_variable_identifier))
+              (type (type_constructor_identifier)))))
+        (type_signature
+          (variable_operator (variable_symbol))
+          (annotation)
+          (function_type
+            (type (type_variable_identifier))
+            (function_type
+              (type (type_variable_identifier))
+              (type (type_constructor_identifier)))))
+        (function_declaration
+          (variable_identifier)
+          (variable_operator (variable_symbol))
+          (variable_identifier)
+          (function_body
+            (function_application
+              (variable_identifier)
+              (parenthesized_expression
+                (infix_operator_application
+                  (variable_identifier)
+                  (variable_operator (variable_symbol))
+                  (variable_identifier))))))
+        (function_declaration
+          (variable_identifier)
+          (variable_operator (variable_symbol))
+          (variable_identifier)
+          (function_body
+            (function_application
+              (variable_identifier)
+              (parenthesized_expression
+                (infix_operator_application
+                  (variable_identifier)
+                  (variable_operator (variable_symbol))
+                  (variable_identifier))))))
+      (minimal_pragma
+        (disjunction (variable_operator (variable_symbol)) (variable_operator (variable_symbol))))
+      (minimal_pragma
+        (conjunction (variable_operator (variable_symbol)) (variable_operator (variable_symbol))))
+      (minimal_pragma
+        (disjunction
+          (conjunction
+            (variable_operator (variable_symbol))
+            (variable_operator (variable_symbol)))
+          (variable_operator (variable_symbol))))
+      (minimal_pragma
+        (disjunction
+          (conjunction
+            (variable_operator (variable_symbol))
+            (variable_operator (variable_symbol)))
+          (conjunction
+            (variable_operator (variable_symbol))
+            (variable_operator (variable_symbol)))))))))
+
+=========================================
+Inlinable Pragmas
+=========================================
+
+a = b
+{-# INLINABLE a #-}
+{-# INLINABLE [1] a #-}
+{-# INLINEABLE [~2] a #-}
+
+---
+
+(module
+  (function_declaration
+    (variable_identifier)
+    (function_body (variable_identifier)))
+  (inlinable_pragma (variable_identifier))
+  (inlinable_pragma (phase_control (integer)) (variable_identifier))
+  (inlinable_pragma (eager_phase_control (integer)) (variable_identifier)))
+
+=========================================
+Unpack Pragmas
+=========================================
+
+data T = T {-# UNPACK #-} !Float
+           {-# UNPACK #-} !Float
+
+---
+
+(module
+  (algebraic_datatype_declaration
+    (type_constructor_identifier)
+      (constructors
+        (data_constructor
+          (constructor_identifier)
+          (unpack_pragma)
+          (strict_type (type_constructor_identifier))
+          (unpack_pragma) (strict_type (type_constructor_identifier))))))
+
+=========================================
+No unpack Pragmas
+=========================================
+
+data T = T {-# NOUNPACK #-} !(Int, Int)
+
+---
+
+(module
+  (algebraic_datatype_declaration
+    (type_constructor_identifier)
+    (constructors
+      (data_constructor
+        (constructor_identifier)
+        (no_unpack_pragma)
+        (strict_type (tuple_type (type_constructor_identifier) (type_constructor_identifier)))))))
+
+=========================================
+Complete Pragmas
+=========================================
+
+data Choice a = Choice Bool a
+
+pattern LeftChoice :: a -> Choice a
+pattern LeftChoice a = Choice False a
+
+pattern RightChoice :: a -> Choice a
+pattern RightChoice a <- Choice True a
+
+{-# COMPLETE LeftChoice, RightChoice #-}
+
+foo :: Choice Int -> Int
+foo (LeftChoice n) = n * 2
+foo (RightChoice n) = n - 2
+
+---
+
+(module
+  (algebraic_datatype_declaration
+    (type_constructor_identifier)
+    (type_variable_identifier)
+    (constructors
+      (data_constructor
+        (constructor_identifier)
+        (type_constructor_identifier)
+        (type_variable_identifier))))
+
+  (pattern_type_signature
+    (constructor_identifier)
+    (annotation)
+    (function_type
+      (type (type_variable_identifier))
+      (type (type_constructor_identifier) (type_variable_identifier))))
+
+  (bidirectional_pattern_synonym
+    (constructor_pattern
+      (constructor_identifier)
+      (variable_identifier))
+    (function_body
+      (function_application
+        (function_application
+          (constructor_identifier)
+          (constructor_identifier))
+        (variable_identifier))))
+
+  (pattern_type_signature
+    (constructor_identifier)
+    (annotation)
+    (function_type
+      (type (type_variable_identifier))
+      (type (type_constructor_identifier) (type_variable_identifier))))
+
+  (unidirectional_pattern_synonym
+    (constructor_pattern
+      (constructor_identifier)
+      (variable_identifier))
+    (function_body
+      (function_application
+        (function_application
+          (constructor_identifier)
+          (constructor_identifier))
+        (variable_identifier))))
+
+  (complete_pragma (constructor_identifier) (constructor_identifier))
+
+  (type_signature
+    (variable_identifier)
+    (annotation)
+    (function_type
+      (type (type_constructor_identifier) (type_constructor_identifier))
+      (type (type_constructor_identifier))))
+  (function_declaration
+    (variable_identifier)
+    (parenthesized_pattern
+      (constructor_pattern (constructor_identifier) (variable_identifier)))
+    (function_body
+      (infix_operator_application
+        (variable_identifier)
+        (variable_operator (variable_symbol))
+        (integer))))
+  (function_declaration
+    (variable_identifier)
+    (parenthesized_pattern
+      (constructor_pattern
+        (constructor_identifier) (variable_identifier)))
+    (function_body
+      (infix_operator_application
+        (variable_identifier)
+        (variable_operator (variable_symbol))
+        (integer)))))
+
+=========================================
+Overlapping Pragmas
+=========================================
+
+instance {-# OVERLAPPING #-} C Int [Int] where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (overlapping_pragma)
+    (type_class_identifier)
+    (instance
+      (type_constructor_identifier) (list_type (type_constructor_identifier)))
+    (where)))
+
+=========================================
+Overlappable Pragmas
+=========================================
+
+instance {-# OVERLAPPABLE #-} Show a => C a Bool where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (overlappable_pragma)
+    (scontext (simple_class (type_class_identifier) (type_variable_identifier)))
+    (type_class_identifier)
+    (instance
+      (type_variable_identifier)
+      (type_constructor_identifier))
+    (where)))
+
+=========================================
+Overlaps Pragmas
+=========================================
+
+instance {-# OVERLAPS #-} Show a => C a Bool where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (overlaps_pragma)
+    (scontext (simple_class (type_class_identifier) (type_variable_identifier)))
+    (type_class_identifier)
+    (instance
+      (type_variable_identifier)
+      (type_constructor_identifier))
+    (where)))
+
+=========================================
+Incoherent Pragmas
+=========================================
+
+instance {-# INCOHERENT #-} (Show a, Show b) => C a [b] where {}
+
+---
+
+(module
+  (type_class_instance_declaration
+    (incoherent_pragma)
+    (scontext (simple_class (type_class_identifier) (type_variable_identifier))
+    (simple_class (type_class_identifier) (type_variable_identifier)))
+    (type_class_identifier)
+    (instance
+      (type_variable_identifier)
+      (list_type (type_variable_identifier)))
+    (where)))
+
+=========================================
+Rule Pragmas
+=========================================
+
+{-# RULES
+      "map/map" [2] forall f g xs. map f (map g xs) = map (f.g) xs
+      "fold/build"  forall k z (g::forall b. (a->b->b) -> b -> b) .
+                    foldr k z (build g) = g k z
+  #-}
+
+---
+
+(module
+  (rules_pragma
+    (rule
+      (name)
+      (phase_control (integer))
+      (rule_pattern_variables (pattern_variable) (pattern_variable) (pattern_variable))
+      (rule_lhs
+        (function_application
+          (function_application
+            (variable_identifier)
+            (variable_identifier))
+          (parenthesized_expression
+            (function_application
+              (function_application
+                (variable_identifier)
+                (variable_identifier))
+              (variable_identifier)))))
+      (rule_rhs
+        (function_application
+          (function_application
+            (variable_identifier)
+            (parenthesized_expression
+              (infix_operator_application
+                (variable_identifier)
+                (variable_operator (variable_symbol))
+                (variable_identifier))))
+          (variable_identifier))))
+
+    (rule
+      (name)
+      (rule_pattern_variables
+        (pattern_variable)
+        (pattern_variable)
+        (pattern_variable_type_signature
+          (pattern_variable)
+          (annotation)
+          (rule_pattern_variables
+            (pattern_variable))
+            (function_type
+              (type
+                (parenthesized_constructor
+                  (function_type
+                    (type (type_variable_identifier))
+                    (function_type
+                      (type (type_variable_identifier))
+                      (type (type_variable_identifier))))))
+              (function_type
+                (type (type_variable_identifier))
+                (type (type_variable_identifier))))))
+      (rule_lhs
+        (function_application
+          (function_application
+            (function_application
+              (variable_identifier)
+              (variable_identifier))
+            (variable_identifier))
+          (parenthesized_expression
+            (function_application
+              (variable_identifier)
+              (variable_identifier)))))
+      (rule_rhs
+        (function_application
+          (function_application
+            (variable_identifier)
+            (variable_identifier))
+          (variable_identifier))))))

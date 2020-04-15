@@ -1,0 +1,50 @@
+{
+  "name": "tree-sitter-haskell",
+  "version": "0.0.2",
+  "description": "Haskell grammar for tree-sitter",
+  "main": "index.js",
+  "keywords": [
+    "parser",
+    "lexer"
+  ],
+  "author": "Rick Winfrey",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.4.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.9.2"
+  },
+  "watch": {
+    "test": {
+      "patterns": [
+        "corpus"
+      ],
+      "extensions": "txt",
+      "quiet": true
+    },
+    "build-grammar": {
+      "patterns": [
+        "./"
+      ],
+      "extensions": "js",
+      "quiet": true
+    },
+    "build-scanner": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "cc",
+      "quiet": true
+    }
+  },
+  "scripts": {
+    "build": "tree-sitter generate && node-gyp build",
+    "test": "tree-sitter test",
+    "build-scanner": "node-gyp build --debug",
+    "build-grammar": "tree-sitter generate && node-gyp build --debug && tree-sitter test",
+    "watch-test": "npm-watch test",
+    "watch-grammar": "npm-watch build-grammar",
+    "watch-scanner": "npm-watch build-scanner"
+  }
+}
