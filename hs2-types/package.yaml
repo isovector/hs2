@@ -22,6 +22,28 @@ description:         Please see the README on GitHub at <https://github.com/isov
 dependencies:
 - base >= 4.7 && < 5
 
+default-extensions:
+  - DerivingStrategies
+  - DeriveGeneric
+  - DeriveDataTypeable
+  - DeriveFunctor
+  - DeriveTraversable
+  - DeriveFoldable
+  - ScopedTypeVariables
+  - UndecidableInstances
+  - FlexibleInstances
+  - FlexibleContexts
+  - MultiParamTypeClasses
+  - LambdaCase
+  - ViewPatterns
+  - KindSignatures
+  - TypeApplications
+  - TypeOperators
+
+ghc-options:
+  - -Wall
+  - -fno-warn-name-shadowing
+
 library:
   source-dirs: src
 

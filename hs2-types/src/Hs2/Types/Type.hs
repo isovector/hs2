@@ -1,24 +1,27 @@
 module Hs2.Types.Type where
 
-type Cxt = Type
+import GHC.Generics
+import Data.Data
 
-data PromotableType
-  = ConTy Name
-  | VarTy Name
+type Cxt name = Type name
+
+data PromotableType name
+  = ConTy name
+  | VarTy name
   | TupleTy Int
+  deriving stock (Eq, Ord, Show, Functor, Data, Generic)
 
-data Type
-  = ForallTy [Name] Type
-  | ConstrainTy Cxt Type
-  | AppTy Type Type
-  | RegularTy PromotableType
-  | PromotedTy PromotableType
+data Type name
+  = ForallTy [name] (Type name)
+  | ConstrainTy (Cxt name) (Type name)
+  | AppTy (Type name) (Type name)
+  | RegularTy (PromotableType name)
+  | PromotedTy (PromotableType name)
   | LitTy TyLit
-  | ArrowTy Type Type
+  deriving stock (Eq, Ord, Show, Functor, Data, Generic)
 
 data TyLit
   = NumTyLit Integer
   | StrTyLit String
-
-data Name
+  deriving stock (Eq, Ord, Show, Data, Generic)
 
