@@ -87,10 +87,14 @@ instance (Traversable q, GBitraversable a b c d (K1 _1 i) (K1 _1 o))
     fmap K1 $ traverse (fmap unK1 . gbitraverse @_ @_ @_ @_ @(K1 _1 i) @(K1 _1 o) f g . K1) loc
 
 bitrav
-  :: (GBitraversable a1 b1 c d (Rep a2) (Rep b2), Applicative f, Generic b2, Generic a2)
-  => (a1 -> f b1)
+  :: ( Generic (t a c)
+     , Generic (t b d)
+     , GBitraversable a b c d (Rep (t a c)) (Rep (t b d))
+     )
+  => Applicative f
+  => (a -> f b)
   -> (c -> f d)
-  -> a2
-  -> f b2
+  -> t a c
+  -> f (t b d)
 bitrav f g = fmap to . gbitraverse f g . from
 
