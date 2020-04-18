@@ -9,7 +9,7 @@ data PromotableType name
   = ConTy name
   | VarTy name
   | TupleTy Int
-  deriving stock (Eq, Ord, Show, Functor, Data, Generic)
+  deriving stock (Eq, Ord, Show, Functor, Data, Generic, Foldable, Traversable)
 
 data Type name
   = ForallTy [name] (Type name)
@@ -18,7 +18,7 @@ data Type name
   | RegularTy (PromotableType name)
   | PromotedTy (PromotableType name)
   | LitTy TyLit
-  deriving stock (Eq, Ord, Show, Functor, Data, Generic)
+  deriving stock (Eq, Ord, Show, Functor, Data, Generic, Foldable, Traversable)
 
 data TyLit
   = NumTyLit Integer

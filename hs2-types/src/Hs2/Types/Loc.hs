@@ -3,6 +3,8 @@ module Hs2.Types.Loc where
 import GHC.Generics
 import Data.Data
 import Data.Bifunctor
+import Data.Bitraversable
+import Data.Bifoldable
 
 data SrcPos = SrcPos
   { srcPosLine :: Int
@@ -17,51 +19,78 @@ data Loc a meta = Loc
   { locSpan :: SrcSpan
   , locMeta :: meta
   , locVal  :: a
-  } deriving (Eq, Ord, Show, Functor, Traversable, Foldable, Data)
+  } deriving (Eq, Ord, Show, Functor, Traversable, Foldable, Data, Generic)
 
 instance Bifunctor Loc where
   first f (Loc span meta a) = Loc span meta (f a)
   second = fmap
 
-class GBimap a b c d i o where
-  gbimap :: (a -> b) -> (c -> d) -> i x -> o x
+instance Bifoldable Loc where
+  bifoldMap = bifoldMapDefault
 
-instance GBimap a b c d i o => GBimap a b c d (M1 _1 _2 i) (M1 _3 _4 o) where
-  gbimap f g = M1 . gbimap f g . unM1
+instance Bitraversable Loc where
+  bitraverse = bitrav
 
-instance GBimap a b c d U1 U1 where
-  gbimap _ _ U1 = U1
 
-instance (GBimap a b c d fi fo, GBimap a b c d gi go) => GBimap a b c d (fi :*: gi) (fo :*: go) where
-  gbimap f g (a :*: b) = gbimap f g a :*: gbimap f g b
+data DLoc a meta = DLoc
+  { dlocSpan :: SrcSpan
+  , dlocVal  :: a
+  } deriving (Eq, Ord, Show, Functor, Traversable, Foldable, Data, Generic)
 
-instance (GBimap a b c d fi fo, GBimap a b c d gi go) => GBimap a b c d (fi :+: gi) (fo :+: go) where
-  gbimap f g (L1 a) = L1 $ gbimap f g a
-  gbimap f g (R1 b) = R1 $ gbimap f g b
+instance Bifunctor DLoc where
+  first f (DLoc span a) = DLoc span (f a)
+  second = fmap
 
-instance {-# INCOHERENT #-} GBimap a b c d (K1 _1 a) (K1 _1 b) where
-  gbimap f _ (K1 a) = K1 $ f a
+instance Bifoldable DLoc where
+  bifoldMap = bifoldMapDefault
 
-instance {-# INCOHERENT #-} GBimap a b c d (K1 _1 c) (K1 _1 d) where
-  gbimap _ g (K1 b) = K1 $ g b
+instance Bitraversable DLoc where
+  bitraverse = bitrav
 
-instance {-# INCOHERENT #-} Bifunctor p => GBimap a b c d (K1 _1 (Loc c (p a c))) (K1 _1 (Loc d (p b d))) where
-  gbimap f g (K1 loc) = K1 $ bimap g (bimap f g) loc
+class GBitraversable a b c d i o where
+  gbitraverse :: Applicative f => (a -> f b) -> (c -> f d) -> i x -> f (o x)
 
-instance {-# INCOHERENT #-} Bifunctor p => GBimap a b c d (K1 _1 (p a c)) (K1 _1 (p b d)) where
-  gbimap f g (K1 loc) = K1 $ bimap f g loc
+instance GBitraversable a b c d i o => GBitraversable a b c d (M1 _1 _2 i) (M1 _3 _4 o) where
+  gbitraverse f g = fmap M1 . gbitraverse f g . unM1
 
-instance {-# INCOHERENT #-} GBimap a b c d (K1 _1 x) (K1 _1 x) where
-  gbimap _ _ (K1 x) = K1 x
+instance GBitraversable a b c d U1 U1 where
+  gbitraverse _ _ U1 = pure U1
 
-instance (Functor q, GBimap a b c d (K1 _1 i) (K1 _1 o))
-    => GBimap a b c d (K1 _1 (q i)) (K1 _1 (q o)) where
-  gbimap f g (K1 loc) =
-    K1 $ fmap (unK1 . gbimap @_ @_ @_ @_ @(K1 _1 i) @(K1 _1 o) f g . K1) loc
+instance (GBitraversable a b c d fi fo, GBitraversable a b c d gi go) => GBitraversable a b c d (fi :*: gi) (fo :*: go) where
+  gbitraverse f g (a :*: b) = (:*:) <$> gbitraverse f g a <*> gbitraverse f g b
 
-glocmap
-  :: (GBimap a1 b c1 d (Rep a2) (Rep c2), Generic c2, Generic a2) =>
-     (a1 -> b) -> (c1 -> d) -> a2 -> c2
-glocmap f g = to . gbimap f g . from
+instance (GBitraversable a b c d fi fo, GBitraversable a b c d gi go) => GBitraversable a b c d (fi :+: gi) (fo :+: go) where
+  gbitraverse f g (L1 a) = fmap L1 $ gbitraverse f g a
+  gbitraverse f g (R1 b) = fmap R1 $ gbitraverse f g b
 
+instance {-# INCOHERENT #-} GBitraversable a b c d (K1 _1 a) (K1 _1 b) where
+  gbitraverse f _ (K1 a) = fmap K1 $ f a
+
+instance {-# INCOHERENT #-} GBitraversable a b c d (K1 _1 c) (K1 _1 d) where
+  gbitraverse _ g (K1 b) = fmap K1 $ g b
+
+instance {-# INCOHERENT #-} Bitraversable p => GBitraversable a b c d (K1 _1 (Loc c (p a c))) (K1 _1 (Loc d (p b d))) where
+  gbitraverse f g (K1 loc) = K1 <$> bitraverse g (bitraverse f g) loc
+
+instance {-# INCOHERENT #-} Bitraversable p => GBitraversable a b c d (K1 _1 (DLoc c (p a c))) (K1 _1 (DLoc d (p b d))) where
+  gbitraverse f g (K1 loc) = fmap K1 $ bitraverse g (bitraverse f g) loc
+
+instance {-# INCOHERENT #-} Bitraversable p => GBitraversable a b c d (K1 _1 (p a c)) (K1 _1 (p b d)) where
+  gbitraverse f g (K1 loc) = fmap K1 $ bitraverse f g loc
+
+instance {-# INCOHERENT #-} GBitraversable a b c d (K1 _1 x) (K1 _1 x) where
+  gbitraverse _ _ (K1 x) = pure $ K1 x
+
+instance (Traversable q, GBitraversable a b c d (K1 _1 i) (K1 _1 o))
+    => GBitraversable a b c d (K1 _1 (q i)) (K1 _1 (q o)) where
+  gbitraverse f g (K1 loc) =
+    fmap K1 $ traverse (fmap unK1 . gbitraverse @_ @_ @_ @_ @(K1 _1 i) @(K1 _1 o) f g . K1) loc
+
+bitrav
+  :: (GBitraversable a1 b1 c d (Rep a2) (Rep b2), Applicative f, Generic b2, Generic a2)
+  => (a1 -> f b1)
+  -> (c -> f d)
+  -> a2
+  -> f b2
+bitrav f g = fmap to . gbitraverse f g . from
 

@@ -10,6 +10,8 @@ import Data.Bifunctor
 import GHC.Generics
 import Hs2.Types.Loc
 import Hs2.Types.Type
+import Data.Bitraversable
+import Data.Bifoldable
 
 data Pat name meta
   = WildPat
@@ -26,14 +28,26 @@ data Pat name meta
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor Pat where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable Pat where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable Pat where
+  bitraverse = bitrav
 
 data FieldPat name meta
   = FieldPat name (Loc meta (Pat name meta))
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor FieldPat where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable FieldPat where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable FieldPat where
+  bitraverse = bitrav
 
 data Lit
   deriving stock (Eq, Ord, Show, Data, Generic)

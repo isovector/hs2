@@ -6,6 +6,8 @@ import Hs2.Types.Type
 import GHC.Generics
 import Data.Data
 import Data.Bifunctor
+import Data.Bitraversable
+import Data.Bifoldable
 
 
 type MatchGroup name meta a = [Match name meta]
@@ -45,7 +47,13 @@ data Expr name meta
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor Expr where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable Expr where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable Expr where
+  bitraverse = bitrav
 
 data Stmt name meta
   = Bind (Loc meta (Pat name meta)) (Loc meta (Expr name meta))
@@ -54,7 +62,13 @@ data Stmt name meta
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor Stmt where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable Stmt where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable Stmt where
+  bitraverse = bitrav
 
 data Lit
   = Char Char
@@ -70,7 +84,13 @@ data Match name meta
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor Match where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable Match where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable Match where
+  bitraverse = bitrav
 
 data FieldValue name meta
   = FieldValue
@@ -79,7 +99,13 @@ data FieldValue name meta
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor FieldValue where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable FieldValue where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable FieldValue where
+  bitraverse = bitrav
 
 data LocalBind name meta
   = LocalBind
@@ -88,5 +114,11 @@ data LocalBind name meta
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor LocalBind where
-  bimap = glocmap
+  bimap = bimapDefault
+
+instance Bifoldable LocalBind where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable LocalBind where
+  bitraverse = bitrav
 
