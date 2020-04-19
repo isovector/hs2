@@ -23,7 +23,7 @@ data Pat name meta
   | LitPat Lit
   | TuplePat [Loc meta (Pat name meta)]
   | RecordPat name [FieldPat name meta]
-  | SigPat (Loc meta (Pat name meta)) (Type name)
+  | SigPat (Loc meta (Pat name meta)) (Type name meta)
   -- | ViewPat Expr (Loc meta (Pat name meta))
   deriving stock (Eq, Ord, Show, Data, Generic)
 

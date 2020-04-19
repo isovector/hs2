@@ -27,7 +27,7 @@ data Expr name meta
       (Loc meta (Expr name meta))
   | TyApp
       (Loc meta (Expr name meta))
-      (Type name)
+      (DLoc meta (Type name meta))
   | Case
       (Loc meta (Expr name meta))
       (MatchGroup name meta (Loc meta (Expr name meta)))
@@ -43,7 +43,7 @@ data Expr name meta
       [FieldValue name meta]
   | TySig
       (Loc meta (Expr name meta))
-      (Type name)
+      (DLoc meta (Type name meta))
   deriving stock (Eq, Ord, Show, Data, Generic)
 
 instance Bifunctor Expr where
