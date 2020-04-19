@@ -15,9 +15,23 @@ data PromotableType name
   | TupleTy Int
   deriving stock (Eq, Ord, Show, Functor, Data, Generic, Foldable, Traversable)
 
+data TyVar name meta
+  = RegularTV name
+  | KindedTV name (DLoc meta (Type name meta))
+  deriving stock (Eq, Ord, Show, Data, Generic)
+
+instance Bifunctor TyVar where
+  bimap = bimapDefault
+
+instance Bifoldable TyVar where
+  bifoldMap = bifoldMapDefault
+
+instance Bitraversable TyVar where
+  bitraverse = bitrav
+
 data Type name meta
   = ForallTy
-      [name]
+      [DLoc meta (TyVar name meta)]
       (DLoc meta (Type name meta))
   | ConstrainTy
       (Cxt name meta)
