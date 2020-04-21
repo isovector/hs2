@@ -27,31 +27,18 @@ data Pat name meta
   -- | ViewPat Expr (Loc meta (Pat name meta))
   deriving stock (Eq, Ord, Show, Data, Generic)
 
-instance Bifunctor Pat where
-  bimap = bimapDefault
-
-instance Bifoldable Pat where
-  bifoldMap = bifoldMapDefault
-
-instance Bitraversable Pat where
-  bitraverse = bitrav
+instance Bifunctor     Pat where bimap = bimapDefault
+instance Bifoldable    Pat where bifoldMap = bifoldMapDefault
+instance Bitraversable Pat where bitraverse = bitrav
 
 data FieldPat name meta
   = FieldPat name (Loc meta (Pat name meta))
   deriving stock (Eq, Ord, Show, Data, Generic)
 
-instance Bifunctor FieldPat where
-  bimap = bimapDefault
-
-instance Bifoldable FieldPat where
-  bifoldMap = bifoldMapDefault
-
-instance Bitraversable FieldPat where
-  bitraverse = bitrav
+instance Bifunctor     FieldPat where bimap = bimapDefault
+instance Bifoldable    FieldPat where bifoldMap = bifoldMapDefault
+instance Bitraversable FieldPat where bitraverse = bitrav
 
 data Lit
-  deriving stock (Eq, Ord, Show, Data, Generic)
-
-data Expr
   deriving stock (Eq, Ord, Show, Data, Generic)
 
